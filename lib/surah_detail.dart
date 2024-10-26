@@ -14,6 +14,7 @@ class SurahDetailScreen extends StatefulWidget {
 class _SurahDetailScreenState extends State<SurahDetailScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool isPlaying = false;
+  int currentAyahIndex = 0;
 
   // List of pastel colors
   final List<Color> pastelColors = [
@@ -26,12 +27,44 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
   void _playSurahAudio() async {
     if (isPlaying) {
       await _audioPlayer.pause();
-    } else {
-      final audioUrl = widget.surahAudio['ayahs'][0]['audioSecondary'][0];
-      await _audioPlayer.play(UrlSource(audioUrl)); // Wrap audio URL with UrlSource
+      setState(() {
+        isPlaying = false;
+      });
+      return;
     }
+
     setState(() {
-      isPlaying = !isPlaying;
+      isPlaying = true;
+      currentAyahIndex = 0; // Reset to the first Ayah
+    });
+
+    // Play the first Ayah
+    _playAyah(currentAyahIndex);
+  }
+
+  Future<void> _playAyah(int index) async {
+    if (index < widget.surahText['ayahs'].length) {
+      final audioUrl = widget.surahAudio['ayahs'][index]['audioSecondary'][0]; // Get the audio URL for the current Ayah
+      await _audioPlayer.play(UrlSource(audioUrl)); // Play the Ayah audio
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Set up the listener for when the audio finishes playing
+    _audioPlayer.onPlayerStateChanged.listen((state) {
+      if (state == PlayerState.completed) {
+        // Move to the next Ayah
+        currentAyahIndex++;
+        if (currentAyahIndex < widget.surahText['ayahs'].length) {
+          _playAyah(currentAyahIndex); // Play the next Ayah
+        } else {
+          setState(() {
+            isPlaying = false; // Stop playback when all Ayahs have been played
+          });
+        }
+      }
     });
   }
 
@@ -44,7 +77,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView( // Wrap Column with SingleChildScrollView
+      body: SingleChildScrollView(
         child: Stack(
           children: [
             Column(
@@ -52,17 +85,16 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
                 // Container for Surah Name
                 Container(
                   width: double.infinity,
-                  // Remove fixed height to fit the content dynamically
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: NetworkImage(
-                        "https://img.freepik.com/free-photo/abstract-luxury-gradient-blue-background-smooth-dark-blue-with-black-vignette-studio-banner_1258-63452.jpg", // Replace with your network image URL
+                        "https://img.freepik.com/free-photo/abstract-luxury-gradient-blue-background-smooth-dark-blue-with-black-vignette-studio-banner_1258-63452.jpg",
                       ),
                       fit: BoxFit.cover,
                     ),
                     borderRadius: BorderRadius.circular(1),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40), // Increased padding
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
                   margin: const EdgeInsets.all(1),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,7 +103,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
                         child: Text(
                           widget.surahText['englishNameTranslation'],
                           style: TextStyle(
-                            fontSize: 30, // Increased font size
+                            fontSize: 30,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                             fontFamily: 'Montserrat',
@@ -83,36 +115,36 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
                         child: Text(
                           'Total Ayahs: ${widget.surahText['ayahs'].length}',
                           style: TextStyle(
-                            fontSize: 18, // Increased font size
+                            fontSize: 18,
                             color: Colors.white,
                             fontFamily: 'Montserrat',
                           ),
                         ),
                       ),
-                      SizedBox(height: 20), // Space between text and button
+                      SizedBox(height: 20),
                       Center(
                         child: ElevatedButton(
                           onPressed: _playSurahAudio,
                           style: ElevatedButton.styleFrom(
-                            shape: CircleBorder(), // Circular shape
-                            backgroundColor: Colors.blue, // Button color
-                            padding: EdgeInsets.all(8), // Button padding
+                            shape: CircleBorder(),
+                            backgroundColor: Colors.blue,
+                            padding: EdgeInsets.all(8),
                           ),
                           child: Icon(
                             isPlaying ? Icons.pause : Icons.play_arrow,
                             color: Colors.white,
-                            size: 24, // Icon size
+                            size: 24,
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(height: 10), // Add some spacing after the container
+                SizedBox(height: 10),
                 // ListView for Ayahs
                 ListView.builder(
-                  shrinkWrap: true, // Use shrinkWrap to prevent overflow
-                  physics: NeverScrollableScrollPhysics(), // Disable scrolling for ListView
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
                   itemCount: widget.surahText['ayahs'].length,
                   itemBuilder: (context, index) {
                     final ayahText = widget.surahText['ayahs'][index];
@@ -124,7 +156,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
                         elevation: 1,
                         color: backgroundColor,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(2), // Rounded corners
+                          borderRadius: BorderRadius.circular(2),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -136,7 +168,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
                                 textAlign: TextAlign.right,
                                 style: TextStyle(fontSize: 23),
                               ),
-                              SizedBox(height: 22), // Space between text and subtitle
+                              SizedBox(height: 22),
                               Text(
                                 'Ayah ${ayahText['numberInSurah']}',
                                 style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
