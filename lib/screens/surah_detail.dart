@@ -88,20 +88,20 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       image: NetworkImage(
-                        "https://img.freepik.com/free-photo/abstract-luxury-gradient-blue-background-smooth-dark-blue-with-black-vignette-studio-banner_1258-63452.jpg",
+                        'https://t4.ftcdn.net/jpg/08/60/31/89/360_F_860318940_RPEYG8qhieE8pyk4Fnc1N4qGEU2avo0q.jpg',
                       ),
-                      fit: BoxFit.cover,
+                      fit: BoxFit.cover, // Use BoxFit.cover for better filling
                     ),
-                    borderRadius: BorderRadius.circular(1),
+
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-                  margin: const EdgeInsets.all(1),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 60),
+                  margin: const EdgeInsets.all(0), // Set margin to 0 to fill corners
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Center(
                         child: Text(
-                          widget.surahText['englishNameTranslation'],
+                          widget.surahText['englishName'],
                           style: TextStyle(
                             fontSize: 30,
                             fontWeight: FontWeight.bold,
@@ -111,16 +111,36 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
                         ),
                       ),
                       SizedBox(height: 4),
+
                       Center(
                         child: Text(
-                          'Total Ayahs: ${widget.surahText['ayahs'].length}',
+                          widget.surahText['englishNameTranslation'],
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 16,
                             color: Colors.white,
                             fontFamily: 'Montserrat',
                           ),
                         ),
                       ),
+                      SizedBox(height: 6),
+                      Divider(
+                        color: Colors.white, // Color of the divider
+                        thickness: 0.6, // Thickness of the divider
+                        indent: 20, // Indentation from the left
+                        endIndent: 20, // Indentation from the right
+                      ),
+                      SizedBox(height: 4), // Space between the divider and the next text
+                      Center(
+                        child: Text(
+                          '${widget.surahText['ayahs'].length} Verses',
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.white,
+                            fontFamily: 'Montserrat',
+                          ),
+                        ),
+                      ),
+
                       SizedBox(height: 20),
                       Center(
                         child: ElevatedButton(
