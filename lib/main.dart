@@ -4,6 +4,7 @@
   import 'package:quranapp/screens/star.dart';
   import 'package:quranapp/screens/surah_detail.dart';
   import 'package:quranapp/screens/surah_names.dart';
+import 'package:quranapp/screens/translation.dart';
   import 'service/api_service.dart';
   import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,7 +21,7 @@
         theme: ThemeData(
           primarySwatch: Colors.green,
         ),
-        home: QuranHomePage(),
+        home: QuranTranslationScreen(),
       );
     }
   }
@@ -145,7 +146,7 @@
                       MaterialPageRoute(
                         builder: (context) => SurahDetailScreen(
                           surahText: surah,
-                          surahAudio: surahAudioList[index], // Ensure this is available
+                          surahAudio: surahAudioList[index], ayahNumber: '', surahNumber: '', verseText: '', // Ensure this is available
                         ),
                       ),
                     );
@@ -308,7 +309,7 @@
                               MaterialPageRoute(
                                 builder: (context) => SurahDetailScreen(
                                   surahText: surahText,
-                                  surahAudio: surahAudio,
+                                  surahAudio: surahAudio, ayahNumber: '', surahNumber: '', verseText: '',
                                 ),
                               ),
                             ),

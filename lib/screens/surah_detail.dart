@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:quranapp/screens/verse.dart'; // Ensure this imports your VerseTranslationScreen
 
 class SurahDetailScreen extends StatefulWidget {
   final Map surahText;
   final Map surahAudio;
+  final String surahNumber;
+  final String ayahNumber;
+  final String verseText; // The actual verse text
 
-  SurahDetailScreen({required this.surahText, required this.surahAudio});
+  SurahDetailScreen({
+    required this.surahText,
+    required this.surahAudio,
+    required this.ayahNumber,
+    required this.surahNumber,
+    required this.verseText,
+  });
 
   @override
   _SurahDetailScreenState createState() => _SurahDetailScreenState();
@@ -14,28 +24,23 @@ class SurahDetailScreen extends StatefulWidget {
 class _SurahDetailScreenState extends State<SurahDetailScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool isPlaying = false;
+  bool isSurahPlaying = false; // Indicates continuous surah playback
   int currentAyahIndex = 0;
-
-  // List of pastel colors
-  final List<Color> pastelColors = [
-    Color(0xFFFFF0DA), // Light Peach
-    Color(0xFFD3EBCD), // Light Green
-    Color(0xFFDCF2F8), // Light Blue
-    Color(0xFFFFD1DC), // Light Pink
-  ];
 
   void _playSurahAudio() async {
     if (isPlaying) {
       await _audioPlayer.pause();
       setState(() {
         isPlaying = false;
+        isSurahPlaying = false; // Stop continuous surah playback
       });
       return;
     }
 
     setState(() {
       isPlaying = true;
-      currentAyahIndex = 0; // Reset to the first Ayah
+      isSurahPlaying = true; // Start continuous surah playback
+      currentAyahIndex = 0;
     });
 
     // Play the first Ayah
@@ -44,24 +49,52 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
 
   Future<void> _playAyah(int index) async {
     if (index < widget.surahText['ayahs'].length) {
-      final audioUrl = widget.surahAudio['ayahs'][index]['audioSecondary'][0]; // Get the audio URL for the current Ayah
-      await _audioPlayer.play(UrlSource(audioUrl)); // Play the Ayah audio
+      final audioUrl = widget.surahAudio['ayahs'][index]['audioSecondary'][0];
+      await _audioPlayer.play(UrlSource(audioUrl));
     }
+  }
+
+  Future<void> _playSpecificAyah(int index) async {
+    setState(() {
+      isPlaying = true;
+      isSurahPlaying = false; // Single ayah playback, not continuous
+    });
+    final audioUrl = widget.surahAudio['ayahs'][index]['audioSecondary'][0];
+    await _audioPlayer.play(UrlSource(audioUrl));
+  }
+
+  void _navigateToTranslation(String verseText, String translationText, String surahNumber, String ayahNumber) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => VerseTranslationScreen(
+          surahNumber: surahNumber,
+          ayahNumber: ayahNumber,
+          translationText: translationText, verseText: verseText,
+        ),
+      ),
+    );
   }
 
   @override
   void initState() {
     super.initState();
-    // Set up the listener for when the audio finishes playing
     _audioPlayer.onPlayerStateChanged.listen((state) {
       if (state == PlayerState.completed) {
-        // Move to the next Ayah
-        currentAyahIndex++;
-        if (currentAyahIndex < widget.surahText['ayahs'].length) {
-          _playAyah(currentAyahIndex); // Play the next Ayah
+        if (isSurahPlaying) {
+          currentAyahIndex++;
+          if (currentAyahIndex < widget.surahText['ayahs'].length) {
+            _playAyah(currentAyahIndex);
+          } else {
+            setState(() {
+              isPlaying = false;
+              isSurahPlaying = false; // Surah playback completed
+            });
+          }
         } else {
+          // If single ayah playback completes, reset play state
           setState(() {
-            isPlaying = false; // Stop playback when all Ayahs have been played
+            isPlaying = false;
           });
         }
       }
@@ -92,7 +125,6 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
                       ),
                       fit: BoxFit.cover, // Use BoxFit.cover for better filling
                     ),
-
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 60),
                   margin: const EdgeInsets.all(0), // Set margin to 0 to fill corners
@@ -111,7 +143,6 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
                         ),
                       ),
                       SizedBox(height: 4),
-
                       Center(
                         child: Text(
                           widget.surahText['englishNameTranslation'],
@@ -140,7 +171,6 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
                           ),
                         ),
                       ),
-
                       SizedBox(height: 20),
                       Center(
                         child: ElevatedButton(
@@ -161,42 +191,85 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
                   ),
                 ),
                 SizedBox(height: 10),
-                // ListView for Ayahs
+                // Ayahs list
                 ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
                   itemCount: widget.surahText['ayahs'].length,
                   itemBuilder: (context, index) {
                     final ayahText = widget.surahText['ayahs'][index];
-                    final backgroundColor = pastelColors[index % pastelColors.length];
 
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 1.0),
-                      child: Card(
-                        elevation: 1,
-                        color: backgroundColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 1.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              Text(
-                                ayahText['text'],
-                                textAlign: TextAlign.right,
-                                style: TextStyle(fontSize: 23),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 13),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Color(0xffefefef),
+                                    borderRadius: BorderRadius.circular(12), // Round corners
+                                  ),
+                                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 13,
+                                        backgroundColor: Color(0xff008080),
+                                        child: Text(
+                                          '${ayahText['numberInSurah']}',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: Icon(
+                                              Icons.play_arrow,
+                                              color: Color(0xff008080),
+                                              size: 25,
+                                            ),
+                                            onPressed: () => _playSpecificAyah(index),
+                                          ),
+                                          IconButton(
+                                            icon: Icon(
+                                              Icons.translate, // Use translation icon
+                                              color: Color(0xff008080),
+                                              size: 25,
+                                            ),
+                                            onPressed: () {
+                                              // Fetch the translation text here
+                                              String translationText = ayahText['translation'] ?? 'Translation not available.';
+
+                                              // Navigate to the VerseTranslationScreen with the required parameters
+                                              _navigateToTranslation(ayahText['text'], translationText, widget.surahNumber, ayahText['numberInSurah'].toString());
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
-                              SizedBox(height: 22),
-                              Text(
-                                'Ayah ${ayahText['numberInSurah']}',
-                                style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  ayahText['text'],
+                                  style: TextStyle(fontSize: 20),
+                                ),
                               ),
+                              Divider(), // Add a divider after each verse
                             ],
                           ),
                         ),
-                      ),
+                      ],
                     );
                   },
                 ),

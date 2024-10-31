@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:quranapp/screens/verse.dart';
 
 class QuranTranslationScreen extends StatefulWidget {
   @override
@@ -18,7 +19,7 @@ class _QuranTranslationScreenState extends State<QuranTranslationScreen> {
   }
 
   Future<void> fetchQuranTranslation() async {
-    final url = 'http://api.alquran.cloud/v1/quran/en.asad';
+    final url = 'http://api.alquran.cloud/v1/quran/en.asad'; // Change to your desired translation
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
@@ -36,6 +37,19 @@ class _QuranTranslationScreenState extends State<QuranTranslationScreen> {
       });
       print('Error fetching Quran translation: $error');
     }
+  }
+
+  void _navigateToTranslation(String verseText, String translationText, String surahNumber, String ayahNumber) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => VerseTranslationScreen(
+          surahNumber: surahNumber,
+          ayahNumber: ayahNumber,
+          translationText: translationText, verseText: verseText,
+        ),
+      ),
+    );
   }
 
   @override
@@ -70,6 +84,15 @@ class _QuranTranslationScreenState extends State<QuranTranslationScreen> {
                       style: TextStyle(fontSize: 16),
                     ),
                     subtitle: Text('Ayah ${ayah['numberInSurah']}'),
+                    trailing: IconButton(
+                      icon: Icon(Icons.translate),
+                      onPressed: () {
+                        // Use the correct translation
+                        String translationText = ayah['translation'] ?? 'Translation not available.';
+                        // Navigate to VerseTranslationScreen with Surah and Ayah numbers
+                        _navigateToTranslation(ayah['text'], translationText, surah['number'].toString(), ayah['numberInSurah'].toString());
+                      },
+                    ),
                   );
                 },
               ),
