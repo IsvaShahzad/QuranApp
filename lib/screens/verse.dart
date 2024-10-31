@@ -58,34 +58,33 @@ class _VerseTranslationScreenState extends State<VerseTranslationScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView( // Wrap the content in SingleChildScrollView
-          child: _isLoading
-              ? Center(child: CircularProgressIndicator())
-              : Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Ayah:',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8),
-              Text(
-                _arabicVerse, // Displaying the Arabic verse fetched from the API
-                style: TextStyle(fontSize: 20),
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Translation:',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8),
-              Text(
-                widget.verseText, // Displaying the verse text passed from the previous screen
-                style: TextStyle(fontSize: 20),
-              ),
-              SizedBox(height: 16),
-            ],
-          ),
+        child: _isLoading
+            ? Center(child: CircularProgressIndicator())
+            : Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Ayah:',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text(
+              _arabicVerse, // Displaying the Arabic verse fetched from the API
+              style: TextStyle(fontSize: 20),
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Translation:',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text(
+              widget.verseText, // Displaying the verse text passed from the previous screen
+              style: TextStyle(fontSize: 20),
+            ),
+            SizedBox(height: 16),
+
+          ],
         ),
       ),
     );

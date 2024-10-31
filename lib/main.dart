@@ -21,7 +21,7 @@ import 'package:quranapp/screens/translation.dart';
         theme: ThemeData(
           primarySwatch: Colors.green,
         ),
-        home: QuranTranslationScreen(),
+        home: QuranHomePage(),
       );
     }
   }

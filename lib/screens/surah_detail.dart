@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:quranapp/screens/translation.dart';
 import 'package:quranapp/screens/verse.dart'; // Ensure this imports your VerseTranslationScreen
 
 class SurahDetailScreen extends StatefulWidget {
@@ -202,73 +203,75 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
                     return Column(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 1.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 13),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Color(0xffefefef),
-                                    borderRadius: BorderRadius.circular(12), // Round corners
-                                  ),
-                                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 13,
-                                        backgroundColor: Color(0xff008080),
-                                        child: Text(
-                                          '${ayahText['numberInSurah']}',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 12,
-                                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
+                          child: Container(
+                            width: double.infinity,
+                            alignment: Alignment.centerLeft,
+                            decoration: BoxDecoration(
+                              color: Color(0xffefefef),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min, // Allow the column to take minimal height
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 13,
+                                      backgroundColor: Color(0xff008080),
+                                      child: Text(
+                                        '${ayahText['numberInSurah']}',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
                                         ),
                                       ),
-                                      Row(
-                                        children: [
-                                          IconButton(
-                                            icon: Icon(
-                                              Icons.play_arrow,
-                                              color: Color(0xff008080),
-                                              size: 25,
-                                            ),
-                                            onPressed: () => _playSpecificAyah(index),
+                                    ),
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          icon: Icon(
+                                            Icons.play_arrow,
+                                            color: Color(0xff008080),
+                                            size: 25,
                                           ),
-                                          IconButton(
-                                            icon: Icon(
-                                              Icons.translate, // Use translation icon
-                                              color: Color(0xff008080),
-                                              size: 25,
-                                            ),
-                                            onPressed: () {
-                                              // Fetch the translation text here
-                                              String translationText = ayahText['translation'] ?? 'Translation not available.';
-
-                                              // Navigate to the VerseTranslationScreen with the required parameters
-                                              _navigateToTranslation(ayahText['text'], translationText, widget.surahNumber, ayahText['numberInSurah'].toString());
-                                            },
+                                          onPressed: () => _playSpecificAyah(index),
+                                        ),
+                                        IconButton(
+                                          icon: Icon(
+                                            Icons.bookmark_border,
+                                            color: Color(0xff008080),
+                                            size: 25,
                                           ),
-                                        ],
-                                      ),
-                                    ],
+                                          onPressed: () {
+                                            Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(builder: (context) => QuranTranslationScreen()),
+                                                  (Route<dynamic> route) => false,
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 8), // Space between icon row and text
+                                Container(
+                                  width: double.infinity, // Ensures the text container takes the full width
+                                  child: Text(
+                                    ayahText['text'],
+                                    style: TextStyle(fontSize: 23),
+                                    textAlign: TextAlign.end, // Ensure left alignment within the text widget
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  ayahText['text'],
-                                  style: TextStyle(fontSize: 20),
-                                ),
-                              ),
-                              Divider(), // Add a divider after each verse
-                            ],
+                              ],
+                            ),
                           ),
                         ),
+
                       ],
                     );
                   },
