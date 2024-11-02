@@ -1,6 +1,10 @@
   import 'dart:convert';
 
   import 'package:flutter/material.dart';
+import 'package:quranapp/screens/juz.dart';
+import 'package:quranapp/screens/main_screen.dart';
+import 'package:quranapp/screens/manzil.dart';
+import 'package:quranapp/screens/sajda.dart';
   import 'package:quranapp/screens/star.dart';
   import 'package:quranapp/screens/surah_detail.dart';
   import 'package:quranapp/screens/surah_names.dart';
@@ -21,7 +25,7 @@ import 'package:quranapp/screens/translation.dart';
         theme: ThemeData(
           primarySwatch: Colors.green,
         ),
-        home: QuranHomePage(),
+        home: CurrentTimeScreen(),
       );
     }
   }

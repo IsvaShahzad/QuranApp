@@ -178,7 +178,7 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
                           onPressed: _playSurahAudio,
                           style: ElevatedButton.styleFrom(
                             shape: CircleBorder(),
-                            backgroundColor: Colors.blue,
+                            backgroundColor: Colors.teal,
                             padding: EdgeInsets.all(8),
                           ),
                           child: Icon(
