@@ -11,21 +11,21 @@ class CurrentTimeScreen extends StatefulWidget {
 
 class _CurrentTimeScreenState extends State<CurrentTimeScreen> {
   String _currentDateTime = 'Loading...';
-  String _islamicDate = 'Loading Islamic Date...';
   Timer? _timer; // Declare a Timer variable
 
   @override
   void initState() {
     super.initState();
     _fetchCurrentTime();
-    // Set up a timer to update the time every minute
-    _timer = Timer.periodic(Duration(seconds: 10), (timer) { // Update every 10 seconds for testing
+    // Set up a timer to update the time every 10 seconds for testing
+    _timer = Timer.periodic(Duration(seconds: 10), (timer) {
       _fetchCurrentTime();
     });
   }
 
   Future<void> _fetchCurrentTime() async {
-    final url = 'https://tools.aimylogic.com/api/now?tz=Asia/Karachi&format=dd/MM/yyyy';
+    final url =
+        'https://tools.aimylogic.com/api/now?tz=Asia/Karachi&format=dd/MM/yyyy';
 
     try {
       final response = await http.get(Uri.parse(url));
@@ -42,11 +42,9 @@ class _CurrentTimeScreenState extends State<CurrentTimeScreen> {
           if (hour == 0) hour = 12; // Handle midnight case
 
           // Combine formatted date with hour, minute, and AM/PM
-          _currentDateTime = '${data['formatted']} ${hour.toString().padLeft(2, '0')}:${data['minute'].toString().padLeft(2, '0')} $period'; // Format: dd/MM/yyyy hh:mm AM/PM
+          _currentDateTime =
+              '${data['formatted']} ${hour.toString().padLeft(2, '0')}:${data['minute'].toString().padLeft(2, '0')} $period'; // Format: dd/MM/yyyy hh:mm AM/PM
         });
-
-        // Fetch Islamic date each time the current time is updated
-        await _fetchIslamicDate(data['formatted']); // Pass the date string directly
       } else {
         setState(() {
           _currentDateTime = 'Error: ${response.statusCode}';
@@ -60,33 +58,6 @@ class _CurrentTimeScreenState extends State<CurrentTimeScreen> {
     }
   }
 
-  Future<void> _fetchIslamicDate(String date) async {
-    // Use a valid API that returns Islamic date
-    final url = 'http://api.aladhan.com/v1/gToH?date=$date'; // Adjust URL as per the actual API used
-
-    try {
-      final response = await http.get(Uri.parse(url));
-      print('Islamic Date Status Code: ${response.statusCode}');
-      print('Islamic Date Response Body: ${response.body}');
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        setState(() {
-          _islamicDate = '${data['data']['hijri']['date']} ${data['data']['hijri']['month']['en']} ${data['data']['hijri']['year']}';
-        });
-      } else {
-        setState(() {
-          _islamicDate = 'Error: ${response.statusCode}';
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _islamicDate = 'Failed to fetch Islamic date';
-      });
-      print('Islamic Date Error: $e');
-    }
-  }
-
   @override
   void dispose() {
     _timer?.cancel(); // Cancel the timer when the widget is disposed
@@ -96,25 +67,87 @@ class _CurrentTimeScreenState extends State<CurrentTimeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor:
+          Colors.transparent, // Set the scaffold background to transparent
       appBar: AppBar(title: Text('Current Date and Time')),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                _currentDateTime,
-                style: TextStyle(fontSize: 24),
-              ),
-              SizedBox(height: 20),
-              Text(
-                _islamicDate,
-                style: TextStyle(fontSize: 24, fontStyle: FontStyle.italic),
-              ),
-            ],
+      body: Stack(
+        children: [
+          // Background color or image for the scaffold
+          Container(
+            color: Colors.grey[
+                200], // You can change this to your desired background color
           ),
-        ),
+          // Container with background image
+          Container(
+            height: 300, // Set the height of the image container
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: NetworkImage(
+                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuQ4nuo4lX_Dd5sEgqxpjKZaY-7N_NsdyLYQ&s'), // Your image URL
+                fit: BoxFit.cover,
+              ),
+            ),
+            // Centering the date and time text inside the image container
+            child: Center(
+              child: Container(
+                padding: EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.black54, // Semi-transparent background
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  _currentDateTime,
+                  style: TextStyle(fontSize: 24, color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+          // Container for the grid tiles
+          Positioned(
+            top: 250, // Positioning the grid tiles right below the image container
+            left: 0,
+            right: 0,
+            child: Container(
+              height: 600,
+              padding: const EdgeInsets.only(top: 50.0,left: 15,right: 15), // Added top padding
+              decoration: BoxDecoration(
+                color: Colors.white, // Background color for the grid tiles
+                borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(25)), // Rounded top corners
+
+              ),
+              child: GridView.builder(
+                shrinkWrap:
+                    true, // Prevents the GridView from expanding to fill the parent
+                physics:
+                    NeverScrollableScrollPhysics(), // Prevents scrolling of GridView
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, // Number of tiles in a row
+                  childAspectRatio: 1, // Aspect ratio of each tile
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                ),
+                itemCount: 4, // Change to your desired number of items
+                itemBuilder: (context, index) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white, // Background color for the square border
+                      border: Border.all(color: Colors.white, width: 0), // Square border color and width
+                      borderRadius: BorderRadius.circular(0), // No rounding for the square border
+                    ),
+                    child: Card(
+                      elevation: 1, // Shadow effect for the card
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero, // Ensure corners are square
+                      ),
+                      child: Center(child: Text('Tile ${index + 1}')),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
