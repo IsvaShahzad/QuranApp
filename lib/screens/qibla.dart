@@ -42,7 +42,7 @@ class _QiblaDirectionScreenState extends State<QiblaDirectionScreen> {
     }
 
     // Fetch the user's current location
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
     setState(() {
       _latitude = position.latitude;
       _longitude = position.longitude;

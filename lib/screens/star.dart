@@ -10,7 +10,7 @@ class StarPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.teal // Set the color to teal
+      ..color = Color(0xff8b7058) // Set the color to teal
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5;
 

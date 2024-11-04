@@ -1,11 +1,5 @@
   import 'dart:convert';
-
   import 'package:flutter/material.dart';
-import 'package:quranapp/screens/juz.dart';
-import 'package:quranapp/screens/main_screen.dart';
-import 'package:quranapp/screens/manzil.dart';
-import 'package:quranapp/screens/qibla.dart';
-import 'package:quranapp/screens/sajda.dart';
   import 'package:quranapp/screens/star.dart';
   import 'package:quranapp/screens/surah_detail.dart';
   import 'package:quranapp/screens/surah_names.dart';
@@ -26,7 +20,7 @@ import 'package:quranapp/screens/translation.dart';
         theme: ThemeData(
           primarySwatch: Colors.green,
         ),
-        home: QiblaDirectionScreen(),
+        home: QuranHomePage(),
       );
     }
   }
@@ -120,17 +114,9 @@ import 'package:quranapp/screens/translation.dart';
 
     Widget _buildQuickAccessSection() {
       List<Map<String, dynamic>> quickAccessSurahs = [
-        ...surahTextList.take(5), // Get the first 5 Surahs from the API
-        {
-          'englishName': 'Yaseen',
-          'englishNameTranslation': 'The Heart of the Quran',
-          'number': 36, // The Surah number
-        },
-        {
-          'englishName': 'Kahf',
-          'englishNameTranslation': 'The Cave',
-          'number': 18, // The Surah number
-        },
+        ...surahTextList.take(8), // Get the first 5 Surahs from the API
+
+
       ];
 
       return Padding(
@@ -151,22 +137,23 @@ import 'package:quranapp/screens/translation.dart';
                       MaterialPageRoute(
                         builder: (context) => SurahDetailScreen(
                           surahText: surah,
-                          surahAudio: surahAudioList[index], ayahNumber: '', surahNumber: '', verseText: '', // Ensure this is available
+                          surahAudio: surahAudioList[index], // Ensure this is available
                         ),
                       ),
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    shape: StadiumBorder(), backgroundColor: Colors.teal,
+                    shape: StadiumBorder(),
+                    backgroundColor: Color(0xff866c55),
                     padding: EdgeInsets.symmetric(horizontal: 16.0),
                   ),
                   child: Text(
                     surah['englishName'],
                     style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Montserrat', // Change this to your desired font family
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold// Adjust font size as needed
+                        color: Colors.white,
+                        fontFamily: 'Montserrat',
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold
                     ),
                   ),
                 ),
@@ -290,6 +277,7 @@ import 'package:quranapp/screens/translation.dart';
                                           '${surahText['englishNameTranslation']}',
                                           style: TextStyle(
                                             fontFamily: 'Montserrat',
+                                            color: Color(0xff725c48),
                                             fontSize: screenWidth * 0.035,
                                           ),
                                         ),
@@ -304,7 +292,9 @@ import 'package:quranapp/screens/translation.dart';
                                   style: TextStyle(
                                     fontFamily: 'Kanit',
                                     fontSize: screenWidth * 0.06,
-                                    color: Colors.black, // Optional: Color for Arabic text
+                                      color: Color(0xff725c48),
+
+// Optional: Color for Arabic text
                                   ),
                                 ),
                               ],
@@ -314,7 +304,7 @@ import 'package:quranapp/screens/translation.dart';
                               MaterialPageRoute(
                                 builder: (context) => SurahDetailScreen(
                                   surahText: surahText,
-                                  surahAudio: surahAudio, ayahNumber: '', surahNumber: '', verseText: '',
+                                  surahAudio: surahAudio,
                                 ),
                               ),
                             ),

@@ -1,21 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:quranapp/screens/translation.dart';
-import 'package:quranapp/screens/verse.dart'; // Ensure this imports your VerseTranslationScreen
+import 'package:quranapp/screens/verse.dart';
 
 class SurahDetailScreen extends StatefulWidget {
   final Map surahText;
   final Map surahAudio;
-  final String surahNumber;
-  final String ayahNumber;
-  final String verseText; // The actual verse text
 
   SurahDetailScreen({
     required this.surahText,
     required this.surahAudio,
-    required this.ayahNumber,
-    required this.surahNumber,
-    required this.verseText,
   });
 
   @override
@@ -25,7 +19,7 @@ class SurahDetailScreen extends StatefulWidget {
 class _SurahDetailScreenState extends State<SurahDetailScreen> {
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool isPlaying = false;
-  bool isSurahPlaying = false; // Indicates continuous surah playback
+  bool isSurahPlaying = false;
   int currentAyahIndex = 0;
 
   void _playSurahAudio() async {
@@ -33,18 +27,17 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
       await _audioPlayer.pause();
       setState(() {
         isPlaying = false;
-        isSurahPlaying = false; // Stop continuous surah playback
+        isSurahPlaying = false;
       });
       return;
     }
 
     setState(() {
       isPlaying = true;
-      isSurahPlaying = true; // Start continuous surah playback
+      isSurahPlaying = true;
       currentAyahIndex = 0;
     });
 
-    // Play the first Ayah
     _playAyah(currentAyahIndex);
   }
 
@@ -58,23 +51,10 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
   Future<void> _playSpecificAyah(int index) async {
     setState(() {
       isPlaying = true;
-      isSurahPlaying = false; // Single ayah playback, not continuous
+      isSurahPlaying = false;
     });
     final audioUrl = widget.surahAudio['ayahs'][index]['audioSecondary'][0];
     await _audioPlayer.play(UrlSource(audioUrl));
-  }
-
-  void _navigateToTranslation(String verseText, String translationText, String surahNumber, String ayahNumber) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => VerseTranslationScreen(
-          surahNumber: surahNumber,
-          ayahNumber: ayahNumber,
-          translationText: translationText, verseText: verseText,
-        ),
-      ),
-    );
   }
 
   @override
@@ -89,11 +69,10 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
           } else {
             setState(() {
               isPlaying = false;
-              isSurahPlaying = false; // Surah playback completed
+              isSurahPlaying = false;
             });
           }
         } else {
-          // If single ayah playback completes, reset play state
           setState(() {
             isPlaying = false;
           });
@@ -111,172 +90,162 @@ class _SurahDetailScreenState extends State<SurahDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        child: Stack(
+        child: Column(
           children: [
-            Column(
-              children: [
-                // Container for Surah Name
-                Container(
+            // Surah header
+            Padding(
+              padding: EdgeInsets.only(top: 60),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                child: Container(
                   width: double.infinity,
+                  height: 200,
                   decoration: BoxDecoration(
+                    color: Colors.white,
                     image: DecorationImage(
-                      image: NetworkImage(
-                        'https://t4.ftcdn.net/jpg/08/60/31/89/360_F_860318940_RPEYG8qhieE8pyk4Fnc1N4qGEU2avo0q.jpg',
-                      ),
-                      fit: BoxFit.cover, // Use BoxFit.cover for better filling
+                      image: AssetImage('assets/images/3.png'),
+                      fit: BoxFit.cover,
                     ),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 60),
-                  margin: const EdgeInsets.all(0), // Set margin to 0 to fill corners
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Center(
-                        child: Text(
-                          widget.surahText['englishName'],
-                          style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            fontFamily: 'Montserrat',
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Center(
-                        child: Text(
-                          widget.surahText['englishNameTranslation'],
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                            fontFamily: 'Montserrat',
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 6),
-                      Divider(
-                        color: Colors.white, // Color of the divider
-                        thickness: 0.6, // Thickness of the divider
-                        indent: 20, // Indentation from the left
-                        endIndent: 20, // Indentation from the right
-                      ),
-                      SizedBox(height: 4), // Space between the divider and the next text
-                      Center(
-                        child: Text(
-                          '${widget.surahText['ayahs'].length} Verses',
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.white,
-                            fontFamily: 'Montserrat',
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      Center(
-                        child: ElevatedButton(
-                          onPressed: _playSurahAudio,
-                          style: ElevatedButton.styleFrom(
-                            shape: CircleBorder(),
-                            backgroundColor: Colors.teal,
-                            padding: EdgeInsets.all(8),
-                          ),
-                          child: Icon(
-                            isPlaying ? Icons.pause : Icons.play_arrow,
-                            color: Colors.white,
-                            size: 24,
-                          ),
-                        ),
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(30),
+                      bottom: Radius.circular(30),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 10,
+                        offset: Offset(0, 4),
                       ),
                     ],
                   ),
-                ),
-                SizedBox(height: 10),
-                // Ayahs list
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: widget.surahText['ayahs'].length,
-                  itemBuilder: (context, index) {
-                    final ayahText = widget.surahText['ayahs'][index];
-
-                    return Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
-                          child: Container(
-                            width: double.infinity,
-                            alignment: Alignment.centerLeft,
-                            decoration: BoxDecoration(
-                              color: Color(0xffefefef),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min, // Allow the column to take minimal height
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 13,
-                                      backgroundColor: Color(0xff008080),
-                                      child: Text(
-                                        '${ayahText['numberInSurah']}',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ),
-                                    Row(
-                                      children: [
-                                        IconButton(
-                                          icon: Icon(
-                                            Icons.play_arrow,
-                                            color: Color(0xff008080),
-                                            size: 25,
-                                          ),
-                                          onPressed: () => _playSpecificAyah(index),
-                                        ),
-                                        IconButton(
-                                          icon: Icon(
-                                            Icons.bookmark_border,
-                                            color: Color(0xff008080),
-                                            size: 25,
-                                          ),
-                                          onPressed: () {
-                                            Navigator.pushAndRemoveUntil(
-                                              context,
-                                              MaterialPageRoute(builder: (context) => QuranTranslationScreen()),
-                                                  (Route<dynamic> route) => false,
-                                            );
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 8), // Space between icon row and text
-                                Container(
-                                  width: double.infinity, // Ensures the text container takes the full width
-                                  child: Text(
-                                    ayahText['text'],
-                                    style: TextStyle(fontSize: 23),
-                                    textAlign: TextAlign.end, // Ensure left alignment within the text widget
-                                  ),
-                                ),
-                              ],
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(30),
+                      bottom: Radius.circular(30),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(top: 30),
+                            child: Text(
+                              widget.surahText['englishName'],
+                              style: TextStyle(
+                                fontSize: 26,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontFamily: 'Montserrat',
+                              ),
                             ),
                           ),
-                        ),
-
-                      ],
-                    );
-                  },
+                          SizedBox(height: 4),
+                          Text(
+                            widget.surahText['englishNameTranslation'],
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontFamily: 'Montserrat',
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            '${widget.surahText['ayahs'].length} Verses',
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.white,
+                              fontFamily: 'Montserrat',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              ],
+              ),
+            ),
+            SizedBox(height: 10), // Space below header
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: Image.asset(
+                'assets/images/bismillah.jpg',
+                height: 130,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+            ),
+            // Ayah list with end alignment
+            ListView.separated(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: widget.surahText['ayahs'].length,
+              separatorBuilder: (context, index) => Divider(
+                color: Colors.grey,
+                thickness: 0.2,
+              ),
+              itemBuilder: (context, index) {
+                final ayahText = widget.surahText['ayahs'][index];
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 14),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Color(0xffe7dfd9),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 13,
+                              backgroundColor: Color(0xff866c55),
+                              child: Text(
+                                '${ayahText['numberInSurah']}',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                            Spacer(),
+                            IconButton(
+                              icon: Icon(
+                                Icons.play_arrow,
+                                color: Color(0xff866c55),
+                                size: 25,
+                              ),
+                              onPressed: () => _playSpecificAyah(index),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.bookmark_border,
+                                color: Color(0xff866c55),
+                                size: 25,
+                              ),
+                              onPressed: () {
+                                // Bookmark action here
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+                      child: Text(
+                        ayahText['text'],
+                        style: TextStyle(fontSize: 23),
+                        textAlign: TextAlign.end, // Right-align all ayahs
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           ],
         ),
