@@ -75,7 +75,6 @@ class _MainScreenState extends State<MainScreen> {
       'assets/images/translation.png',
     ];
 
-    // List of different text for each tile
     final List<String> texts = [
       'Quran',
       'Sajda',
@@ -84,68 +83,65 @@ class _MainScreenState extends State<MainScreen> {
       'Translate'
     ];
 
-    // List of pages corresponding to each tile
     final List<Widget> pages = [
       QuranHomePage(),
       SajdaScreen(),
       ManzilScreen(),
       QuranTranslationScreen(),
+      QuranTranslationScreen(),
+
     ];
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Color(0xffab907a),
       body: Stack(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(
-                  'https://cdn.pixabay.com/photo/2014/04/08/22/52/texture-319740_640.jpg',
-                ),
-                fit: BoxFit.cover,
-              ),
+          // Background image
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/main.png', // Replace with your image path
+              fit: BoxFit.cover, // Make the image cover the entire background
             ),
           ),
+
+          // Content overlay
           Column(
             children: [
+              // Date and time display
               Container(
-                padding: EdgeInsets.only(top: 125, bottom: 20),
+                padding: EdgeInsets.only(top: 160, bottom: 10),
                 child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 5),
-                      child: Text(
-                        _currentDateTime,
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.white,
-                          fontFamily: 'Montserrat',
-                        ),
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 40, bottom: 15),
+                    child: Text(
+                      _currentDateTime,
+                      style: TextStyle(
+                        fontSize: 17,
+                        color: Colors.white,
+                        fontFamily: 'Montserrat',
                       ),
                     ),
                   ),
                 ),
               ),
-              Expanded( // Use Expanded to allow the second container to take available space
+
+              // Grid view for the tiles
+              Expanded(
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
                   ),
-                  child: SingleChildScrollView( // Make the inner content scrollable
+                  child: SingleChildScrollView(
                     child: GridView.builder(
-                      physics: NeverScrollableScrollPhysics(), // Disable GridView scrolling
-                      shrinkWrap: true, // Allow GridView to size itself
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
-                        childAspectRatio: 1, // Adjust this for larger tiles
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
+                        childAspectRatio: 1.12,
+                        crossAxisSpacing: 11,
+                        mainAxisSpacing: 11,
                       ),
                       itemCount: images.length,
                       itemBuilder: (context, index) {
@@ -181,13 +177,14 @@ class _MainScreenState extends State<MainScreen> {
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Padding(
-                                padding: EdgeInsets.only(top: 115, left: 47),
+                                padding: EdgeInsets.only(top: 110, left: 47),
                                 child: Text(
                                   texts[index],
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 18,
                                     fontFamily: 'Kanit',
+                                    letterSpacing: 0.5,
                                     shadows: [
                                       Shadow(
                                         color: Colors.black54,
@@ -212,4 +209,5 @@ class _MainScreenState extends State<MainScreen> {
       ),
     );
   }
+
 }
