@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:quranapp/service/manzil_service.dart';  // Import your service
 import 'package:flutter_pdfview/flutter_pdfview.dart';  // Import the PDF view package
+import 'package:flutter_spinkit/flutter_spinkit.dart';  // Import the SpinKit package
 
 // Manzil Screen Widget
 class ManzilScreen extends StatelessWidget {
@@ -16,7 +17,12 @@ class ManzilScreen extends StatelessWidget {
         future: fetchAndSaveManzil(manzilNumber),  // Fetch and save PDF using Ngrok URL
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());  // Show loading indicator while fetching PDF
+            return Center(
+              child: SpinKitThreeBounce(  // Use three bouncing dots as a loading indicator
+                color: Colors.grey,  // Set your desired color here
+                size: 20.0,
+              ),
+            );
           }
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));  // Handle any errors

@@ -7,6 +7,7 @@ import 'package:quranapp/main.dart';
 import 'package:quranapp/screens/manzil.dart';
 import 'package:quranapp/screens/sajda.dart';
 import 'package:quranapp/screens/translation.dart';
+import 'package:quranapp/screens/yaseen.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -87,7 +88,7 @@ class _MainScreenState extends State<MainScreen> {
       QuranHomePage(),
       SajdaScreen(),
       ManzilScreen(),
-      QuranTranslationScreen(),
+      YaseenScreen(),
       QuranTranslationScreen(),
 
     ];

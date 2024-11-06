@@ -1,5 +1,6 @@
   import 'dart:convert';
   import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:quranapp/screens/main_screen.dart';
   import 'package:quranapp/screens/star.dart';
   import 'package:quranapp/screens/surah_detail.dart';
@@ -26,6 +27,7 @@ import 'package:quranapp/screens/translation.dart';
     }
   }
 
+
   class QuranHomePage extends StatefulWidget {
     @override
     _QuranHomePageState createState() => _QuranHomePageState();
@@ -37,7 +39,8 @@ import 'package:quranapp/screens/translation.dart';
     List surahAudioList = [];
     List filteredSurahTextList = [];
     List filteredSurahAudioList = [];
-    bool isLoading = true;
+    bool isLoading = true;  // Main loading flag for initial data loading
+    bool isTileLoading = false; // Loading flag for individual list tile
     String searchQuery = "";
 
     @override
@@ -115,9 +118,7 @@ import 'package:quranapp/screens/translation.dart';
 
     Widget _buildQuickAccessSection() {
       List<Map<String, dynamic>> quickAccessSurahs = [
-        ...surahTextList.take(8), // Get the first 5 Surahs from the API
-
-
+        ...surahTextList.take(8), // Get the first 8 Surahs from the API
       ];
 
       return Padding(
@@ -151,10 +152,10 @@ import 'package:quranapp/screens/translation.dart';
                   child: Text(
                     surah['englishName'],
                     style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'Montserrat',
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold
+                      color: Colors.white,
+                      fontFamily: 'Montserrat',
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
@@ -227,13 +228,27 @@ import 'package:quranapp/screens/translation.dart';
                   ),
                 ),
                 SizedBox(height: 15),
-                Padding(padding: EdgeInsets.only(right: 230),
-                child: Text('Quick access',style: TextStyle(fontFamily: 'Montserrat', color: Colors.grey[500], fontSize: 15),)),// Space between search bar and quick access section
+                Padding(
+                  padding: EdgeInsets.only(right: 230),
+                  child: Text(
+                    'Quick access',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      color: Colors.grey[500],
+                      fontSize: 15,
+                    ),
+                  ),
+                ), // Space between search bar and quick access section
                 SizedBox(height: 5), // Space between quick access and list tile
                 _buildQuickAccessSection(), // Quick Access section
                 SizedBox(height: 10), // Space between quick access and list tile
                 isLoading
-                    ? Center(child: CircularProgressIndicator())
+                    ? Center(
+                  child: SpinKitThreeBounce(  // Use three bouncing dots as a loading indicator
+                    color: Colors.grey,  // Set your desired color here
+                    size: 20.0,
+                  ),
+                )
                     : Expanded(
                   child: ListView.builder(
                     padding: EdgeInsets.symmetric(
@@ -287,30 +302,44 @@ import 'package:quranapp/screens/translation.dart';
                                   ),
                                 ),
                                 // Arabic Name on the right
-                                SizedBox(width: 20), // Space before Arabic name
+                                SizedBox(width: 20), // Space between text and Arabic name
                                 Text(
-                                  '${arabicSurahNames[surahText['number']]}', // Arabic name
+                                  surahText['name'],
                                   style: TextStyle(
                                     fontFamily: 'Kanit',
-                                    fontSize: screenWidth * 0.06,
-                                      color: Color(0xff725c48),
-
-// Optional: Color for Arabic text
+                                    fontSize: screenWidth * 0.059,
                                   ),
                                 ),
                               ],
                             ),
-                            onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => SurahDetailScreen(
-                                  surahText: surahText,
-                                  surahAudio: surahAudio,
+                            onTap: () async {
+                              setState(() {
+                                isTileLoading = true;  // Set loading flag to true when tile is tapped
+                              });
+
+                              await Future.delayed(Duration(seconds: 2));  // Simulate delay
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SurahDetailScreen(
+                                    surahText: surahText,
+                                    surahAudio: surahAudio,
+                                  ),
                                 ),
-                              ),
-                            ),
+                              );
+
+                              setState(() {
+                                isTileLoading = false;  // Set loading flag to false after navigation
+                              });
+                            },
                           ),
-                          Divider(thickness: 1, color: Colors.grey[200]), // Divider
+                          // if (isTileLoading)
+                          //   Center(
+                          //     child: SpinKitThreeBounce(
+                          //       color: Colors.grey,
+                          //       size: 20.0,
+                          //     ),
+                          //   ),
                         ],
                       );
                     },
@@ -318,6 +347,11 @@ import 'package:quranapp/screens/translation.dart';
                 ),
               ],
             ),
+            if (isTileLoading)  // Show loading spinner when any tile is being processed
+              SpinKitThreeBounce(
+                color: Colors.grey,
+                size: 30.0,
+              ),
           ],
         ),
       );

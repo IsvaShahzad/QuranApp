@@ -1,5 +1,7 @@
+// sajda_screen.dart
 import 'package:flutter/material.dart';
 import '../service/sajda_service.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart'; // Import flutter_spinkit package
 
 class SajdaScreen extends StatelessWidget {
   @override
@@ -45,8 +47,15 @@ class SajdaScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(height: 50,),
-                          Text('Al Quran,', style: TextStyle(fontSize: 17,fontFamily: 'Kanit', color: Colors.white70),),
+                          SizedBox(height: 50),
+                          Text(
+                            'Al Quran,',
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontFamily: 'Kanit',
+                              color: Colors.white70,
+                            ),
+                          ),
                           Padding(
                             padding: EdgeInsets.only(top: 5),
                             child: Text(
@@ -87,7 +96,12 @@ class SajdaScreen extends StatelessWidget {
               ]),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return Center(
+                    child: SpinKitThreeBounce(
+                      color: Colors.grey, // Set color for the dots
+                      size: 20.0,         // Set size for the dots
+                    ),
+                  ); // Show loading dots while fetching data
                 }
                 if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
