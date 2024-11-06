@@ -12,7 +12,6 @@ class ManzilScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Manzil $manzilNumber Ayahs')),
       body: FutureBuilder<String>(  // Use FutureBuilder to handle async PDF download and display
         future: fetchAndSaveManzil(manzilNumber),  // Fetch and save PDF using Ngrok URL
         builder: (context, snapshot) {

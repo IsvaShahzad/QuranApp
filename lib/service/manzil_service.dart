@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 Future<String> fetchAndSaveManzil(int manzilNumber) async {
-  final response = await http.get(Uri.parse('https://eccc-119-73-100-175.ngrok-free.app/pdf/manzil.pdf')); // Your Ngrok public URL
+  final response = await http.get(Uri.parse('https://e0c5-119-73-100-175.ngrok-free.app/pdf/manzil.pdf')); // Ngrok URL for Manzil PDF
 
   if (response.statusCode == 200) {
     // Get the temporary directory where we'll store the PDF file
