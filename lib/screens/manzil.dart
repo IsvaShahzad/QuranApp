@@ -23,16 +23,30 @@ class _ManzilScreenState extends State<ManzilScreen> {
   @override
   void initState() {
     super.initState();
-    downloadPdf();  // Start the download process as soon as the screen is initialized
+    checkAndDownloadPdf();  // Check if PDF exists, and download if not
+  }
+
+  // Function to check if PDF exists locally and download it if necessary
+  Future<void> checkAndDownloadPdf() async {
+    final dir = await getTemporaryDirectory();
+    filePath = "${dir.path}/manzil.pdf";  // Specify the file path
+
+    // Check if the file already exists locally
+    final file = File(filePath);
+    if (await file.exists()) {
+      // If file exists, no need to download again
+      setState(() {
+        isLoading = false;
+      });
+    } else {
+      // If file doesn't exist, download the PDF
+      downloadPdf();
+    }
   }
 
   // Function to download the PDF
   Future<void> downloadPdf() async {
     try {
-      // Show a loading spinner and get the temporary directory to store the PDF
-      final dir = await getTemporaryDirectory();
-      filePath = "${dir.path}/manzil.pdf";  // Specify the file path
-
       // Download the PDF asynchronously without blocking UI
       final response = await http.get(Uri.parse(pdfUrl));
       if (response.statusCode == 200) {
